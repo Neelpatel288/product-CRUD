@@ -10,11 +10,11 @@ const insertProdcut = async () => {
         const db = client.db(databaseName)
         const products = db.collection('mobiles')
 
-        products.createIndex({productName: 1}, {unique: true})
-        products.createIndex({seller: 1}, {unique: true})
+        products.createIndex({productName: 1, seller: 1}, {unique: true})
+        // products.createIndex({seller: 1}, {unique: true})
 
         const addOne = {
-            productName: 'iPhone',
+            productName: 'iPad',
             category: 'Mobile',
             description: 'Electronic gadget',
             seller: 'Apple',
@@ -57,6 +57,9 @@ const insertProdcut = async () => {
     }
 }
 
+insertProdcut()
+
+
 const findProduct = async () => {
     try {
         const db = client.db(databaseName)
@@ -75,6 +78,8 @@ const findProduct = async () => {
         console.log ('Database not found')
     }
 }
+
+// findProduct()
 
 const updateProduct = () => {
     const db = client.db(databaseName)
@@ -101,6 +106,8 @@ const updateProduct = () => {
     })
 }
 
+// updateProduct()
+
 const deleteProduct = () => {
     const db = client.db(databaseName)
     const products = db.collection('mobiles')
@@ -114,7 +121,4 @@ const deleteProduct = () => {
     })
 }
 
-// insertProdcut()
-// findProduct()
-// updateProduct()
 // deleteProduct()
