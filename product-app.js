@@ -4,17 +4,15 @@ const connectionURL = 'mongodb://127.0.0.1:27017'
 const databaseName = 'product-app'
 
 const client = new MongoClient (connectionURL)
+const db = client.db(databaseName)
+const products = db.collection('mobiles')
 
 const insertProdcut = async () => {
     try {
-        const db = client.db(databaseName)
-        const products = db.collection('mobiles')
-
-        products.createIndex({productName: 1}, {unique: true})
-        products.createIndex({seller: 1}, {unique: true})
+         products.createIndex({productName: 1, seller: 1}, {unique: true})
 
         const addOne = {
-            productName: 'iPhone',
+            productName: 'iPad',
             category: 'Mobile',
             description: 'Electronic gadget',
             seller: 'Apple',
@@ -53,14 +51,16 @@ const insertProdcut = async () => {
 
 
     } catch (e) {
-        console.log('Product not found')
+        console.log('Duplicate Product found. kindly update quantity.')
+        console.log(e)
     }
 }
 
+insertProdcut()
+
+
 const findProduct = async () => {
     try {
-        const db = client.db(databaseName)
-        const products = db.collection('mobiles')
         const query1 = { _id : ObjectId('63c8d8308da271c34af8868b') }
         const query2 = { ratings: { $gt : 4 } }
 
@@ -71,50 +71,60 @@ const findProduct = async () => {
         console.log("🚀 ~ file: product-app.js:69 ~ findProduct ~ find2", find2)
 
 
-    } catch {
-        console.log ('Database not found')
+    } catch (e) {
+        console.log (e)
     }
 }
 
+// findProduct()
+
 const updateProduct = () => {
-    const db = client.db(databaseName)
-    const products = db.collection('mobiles')
+    try{
+        products.updateOne({
+            _id: ObjectId('63c8d8308da271c34af88689')
+        }, {
+            $inc: {
+                quantity: 5
+            }
+        }).then((result) => {
+            console.log(result)
+        }).catch((error) => {
+            console.log(error)
+        })
 
-    products.updateOne({
-        _id: ObjectId('63c8d8308da271c34af88689')
-    }, {
-        $inc: {
-            quantity: 5
-        }
-    }).then((result) => {
-        console.log(result)
-    }).catch((error) => {
-        console.log(error)
-    })
-
-    products.updateMany({
-        ratings: { $gt : 4 }
-    }, {
-        $inc: {
-            ratings: 0.2
-        }
-    })
+        products.updateMany({
+            ratings: { $gt : 4 }
+        }, {
+            $inc: {
+                ratings: 0.2
+            }
+        }).then((result) => {
+            console.log(result)
+        }).catch((error) => {
+            console.log(error)
+        })
+    } catch (e) {
+        console.log(e)
+    }
+    
 }
+
+// updateProduct()
 
 const deleteProduct = () => {
-    const db = client.db(databaseName)
-    const products = db.collection('mobiles')
-
-    products.deleteMany({
-        quantity: {$lt : 7}
-    }).then((result) => {
-        console.log(result)
-    }).catch((error) => {
-        console.log(error)
-    })
+    try {
+        products.deleteMany({
+            quantity: {$lt : 7}
+        }).then((result) => {
+            console.log(result)
+        }).catch((error) => {
+            console.log(error)
+        })
+    } catch (e) {
+        console.log(e)
+    }
+    
+    
 }
 
-// insertProdcut()
-// findProduct()
-// updateProduct()
 // deleteProduct()
